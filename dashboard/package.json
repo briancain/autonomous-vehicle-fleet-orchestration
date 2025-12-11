@@ -1,0 +1,17 @@
+{
+  "name": "fleet-dashboard",
+  "version": "1.0.0",
+  "description": "Live dashboard for autonomous vehicle fleet",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.0"
+  }
+}

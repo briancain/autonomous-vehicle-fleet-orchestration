@@ -1,0 +1,19 @@
+aws_region   = "us-west-2"
+environment  = "dev"
+project_name = "fleet-orchestration"
+
+# VPC Configuration
+vpc_cidr = "10.0.0.0/16"
+
+# ECS Task Configuration
+fleet_service_cpu    = 256
+fleet_service_memory = 512
+
+job_service_cpu    = 256
+job_service_memory = 512
+
+car_simulator_cpu    = 256
+car_simulator_memory = 512
+
+# Service Configuration
+desired_count = 2

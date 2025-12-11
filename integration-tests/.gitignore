@@ -1,0 +1,18 @@
+# Test artifacts
+*.log
+coverage.out
+coverage.html
+
+# Go test cache
+go.sum
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Dashboard</title>
+    <link rel="stylesheet" href="vendor/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>🚗 Fleet Dashboard</h1>
+            <div class="status-bar">
+                <span id="connection-status">●</span>
+                <span id="last-update">Last update: --</span>
+            </div>
+        </header>
+
+        <div class="metrics">
+            <div class="metric-card">
+                <h3>Active Vehicles</h3>
+                <span id="active-vehicles">--</span>
+            </div>
+            <div class="metric-card">
+                <h3>Pending Jobs</h3>
+                <span id="pending-jobs">--</span>
+            </div>
+            <div class="metric-card">
+                <h3>Total Completed</h3>
+                <span id="completed-jobs">--</span>
+            </div>
+            <div class="metric-card">
+                <h3>Fleet Health</h3>
+                <span id="fleet-health">--</span>
+            </div>
+            <div class="metric-card revenue">
+                <h3>💰 Total Revenue</h3>
+                <span id="total-revenue">$--</span>
+            </div>
+            <div class="metric-card revenue">
+                <h3>🚗 Ride Revenue</h3>
+                <span id="ride-revenue">$--</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            <div class="sidebar">
+                <div class="job-queue">
+                    <h3>All Jobs <span id="job-count" class="vehicle-count">0</span></h3>
+                    <div id="job-list"></div>
+                </div>
+                <div class="vehicle-list">
+                    <h3>Vehicle Status <span id="vehicle-count" class="vehicle-count">0</span></h3>
+                    <div id="vehicle-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="vendor/leaflet.js"></script>
+    <script src="dist/app.js"></script>
+</body>
+</html>
