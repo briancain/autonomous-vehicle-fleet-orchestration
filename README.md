@@ -2,7 +2,9 @@
 
 A comprehensive fleet management system for autonomous vehicles with job generation, vehicle tracking, and real-time orchestration using containerized Go microservices.
 
-This application was created as a demo app for resiliency testing.
+This application was created as a demo app for resiliency testing. It features a
+Primary/Secondary multi-region architecture. It has a few intentional faults
+injected into the system.
 
 ## Architecture
 
