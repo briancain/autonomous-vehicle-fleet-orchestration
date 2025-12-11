@@ -127,12 +127,3 @@ The `init.sh` script handles backend configuration automatically by:
 2. Generating a user-specific backend configuration
 3. Creating the `backend.tf` file with proper settings
 4. Running `terraform init` with the new backend
-
-## Recent Fixes
-
-- Fixed job generator counting logic to only count active jobs (pending + assigned)
-- Added comprehensive unit tests for job counting functionality
-- Resolved issue where job generation stopped after 25 total jobs
-- Updated infrastructure to use DynamoDB instead of RDS PostgreSQL
-- Migrated to native DynamoDB Global Tables for multi-region replication
-- Removed custom Lambda replication in favor of AWS-managed Global Tables
