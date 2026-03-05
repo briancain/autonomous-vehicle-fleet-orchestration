@@ -12,7 +12,7 @@ resource "tls_self_signed_cert" "alb" {
   private_key_pem = tls_private_key.alb.private_key_pem
 
   subject {
-    common_name  = "fleet-orchestration-demo"
+    common_name  = "fleet-orchestration-demo.example.com"
     organization = "Demo"
   }
 
@@ -40,7 +40,7 @@ resource "tls_self_signed_cert" "alb_secondary" {
   private_key_pem = tls_private_key.alb_secondary.private_key_pem
 
   subject {
-    common_name  = "fleet-orchestration-demo-west1"
+    common_name  = "fleet-orchestration-demo-west1.example.com"
     organization = "Demo"
   }
 
