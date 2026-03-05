@@ -62,3 +62,14 @@ output "kinesis_job_events_stream" {
   description = "Name of the job events Kinesis stream"
   value       = aws_kinesis_stream.job_events.name
 }
+
+output "admin_username" {
+  description = "Admin username for ALB authentication"
+  value       = "admin"
+}
+
+output "admin_password" {
+  description = "Admin password for ALB authentication"
+  value       = random_password.admin.result
+  sensitive   = true
+}

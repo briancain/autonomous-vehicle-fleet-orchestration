@@ -247,8 +247,19 @@ resource "aws_lb_listener" "secondary" {
   certificate_arn   = aws_acm_certificate.alb_secondary.arn
 
   default_action {
+    type = "authenticate-cognito"
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.secondary.arn
+      user_pool_client_id = aws_cognito_user_pool_client.alb_secondary.id
+      user_pool_domain    = aws_cognito_user_pool_domain.secondary.domain
+    }
+    order = 1
+  }
+
+  default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.dashboard_secondary.arn
+    order            = 2
   }
 }
 
@@ -276,8 +287,19 @@ resource "aws_lb_listener_rule" "fleet_service_secondary" {
   priority     = 100
 
   action {
+    type = "authenticate-cognito"
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.secondary.arn
+      user_pool_client_id = aws_cognito_user_pool_client.alb_secondary.id
+      user_pool_domain    = aws_cognito_user_pool_domain.secondary.domain
+    }
+    order = 1
+  }
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.fleet_service_secondary.arn
+    order            = 2
   }
 
   condition {
@@ -293,8 +315,19 @@ resource "aws_lb_listener_rule" "job_service_secondary" {
   priority     = 200
 
   action {
+    type = "authenticate-cognito"
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.secondary.arn
+      user_pool_client_id = aws_cognito_user_pool_client.alb_secondary.id
+      user_pool_domain    = aws_cognito_user_pool_domain.secondary.domain
+    }
+    order = 1
+  }
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.job_service_secondary.arn
+    order            = 2
   }
 
   condition {

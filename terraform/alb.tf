@@ -93,8 +93,19 @@ resource "aws_lb_listener" "main" {
   certificate_arn   = aws_acm_certificate.alb.arn
 
   default_action {
+    type = "authenticate-cognito"
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.main.arn
+      user_pool_client_id = aws_cognito_user_pool_client.alb.id
+      user_pool_domain    = aws_cognito_user_pool_domain.main.domain
+    }
+    order = 1
+  }
+
+  default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.dashboard.arn
+    order            = 2
   }
 }
 
@@ -119,8 +130,19 @@ resource "aws_lb_listener_rule" "api_proxy" {
   priority     = 25
 
   action {
+    type = "authenticate-cognito"
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.main.arn
+      user_pool_client_id = aws_cognito_user_pool_client.alb.id
+      user_pool_domain    = aws_cognito_user_pool_domain.main.domain
+    }
+    order = 1
+  }
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.dashboard.arn
+    order            = 2
   }
 
   condition {
@@ -135,8 +157,19 @@ resource "aws_lb_listener_rule" "fleet_service" {
   priority     = 100
 
   action {
+    type = "authenticate-cognito"
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.main.arn
+      user_pool_client_id = aws_cognito_user_pool_client.alb.id
+      user_pool_domain    = aws_cognito_user_pool_domain.main.domain
+    }
+    order = 1
+  }
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.fleet_service.arn
+    order            = 2
   }
 
   condition {
@@ -151,8 +184,19 @@ resource "aws_lb_listener_rule" "job_service" {
   priority     = 200
 
   action {
+    type = "authenticate-cognito"
+    authenticate_cognito {
+      user_pool_arn       = aws_cognito_user_pool.main.arn
+      user_pool_client_id = aws_cognito_user_pool_client.alb.id
+      user_pool_domain    = aws_cognito_user_pool_domain.main.domain
+    }
+    order = 1
+  }
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.job_service.arn
+    order            = 2
   }
 
   condition {
