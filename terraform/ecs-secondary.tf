@@ -160,11 +160,15 @@ resource "aws_ecs_task_definition" "car_simulator_secondary" {
         },
         {
           name  = "FLEET_SERVICE_URL"
-          value = "http://${aws_lb.secondary.dns_name}/api/fleet"
+          value = "https://${aws_lb.secondary.dns_name}/api/fleet"
         },
         {
           name  = "JOB_SERVICE_URL"
-          value = "http://${aws_lb.secondary.dns_name}/api/jobs"
+          value = "https://${aws_lb.secondary.dns_name}/api/jobs"
+        },
+        {
+          name  = "TLS_SKIP_VERIFY"
+          value = "true"
         }
       ]
 
@@ -205,11 +209,15 @@ resource "aws_ecs_task_definition" "dashboard_secondary" {
       environment = [
         {
           name  = "REACT_APP_FLEET_SERVICE_URL"
-          value = "http://${aws_lb.secondary.dns_name}/api/fleet"
+          value = "https://${aws_lb.secondary.dns_name}/api/fleet"
         },
         {
           name  = "REACT_APP_JOB_SERVICE_URL"
-          value = "http://${aws_lb.secondary.dns_name}/api/jobs"
+          value = "https://${aws_lb.secondary.dns_name}/api/jobs"
+        },
+        {
+          name  = "NODE_TLS_REJECT_UNAUTHORIZED"
+          value = "0"
         }
       ]
 

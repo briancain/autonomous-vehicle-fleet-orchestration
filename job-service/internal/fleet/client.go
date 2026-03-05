@@ -3,11 +3,13 @@ package fleet
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"time"
 )
@@ -39,10 +41,15 @@ type Client struct {
 
 // NewClient creates a new fleet service client
 func NewClient(baseURL string) *Client {
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	if os.Getenv("TLS_SKIP_VERIFY") == "true" {
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 	return &Client{
 		baseURL: baseURL,
 		httpClient: &http.Client{
-			Timeout: 10 * time.Second,
+			Timeout:   10 * time.Second,
+			Transport: transport,
 		},
 	}
 }

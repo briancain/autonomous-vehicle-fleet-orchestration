@@ -3,6 +3,7 @@ package simulator
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -34,6 +35,7 @@ type Vehicle struct {
 	fleetServiceURL  string
 	jobServiceURL    string
 	jobClient        job.JobClient
+	httpClient       *http.Client
 	targetLat        float64
 	targetLng        float64
 	isMoving         bool
@@ -56,6 +58,11 @@ func NewVehicle(id, region, fleetServiceURL, jobServiceURL string, startLat, sta
 	batteryLevel := rand.Intn(40) + 60 // Start with 60-100% battery
 	batteryDrainRate := 4.0            // 4.0km per 1% battery (400km total range)
 
+	transport := http.DefaultTransport.(*http.Transport).Clone()
+	if os.Getenv("TLS_SKIP_VERIFY") == "true" {
+		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
 	v := &Vehicle{
 		ID:               id,
 		Region:           region,
@@ -68,6 +75,7 @@ func NewVehicle(id, region, fleetServiceURL, jobServiceURL string, startLat, sta
 		fleetServiceURL:  fleetServiceURL,
 		jobServiceURL:    jobServiceURL,
 		jobClient:        job.NewClient(jobServiceURL),
+		httpClient:       &http.Client{Timeout: 10 * time.Second, Transport: transport},
 		batteryDrainRate: batteryDrainRate,
 		jobPhase:         "idle",
 		routingService:   NewRoutingService(),
@@ -610,7 +618,7 @@ func (v *Vehicle) registerWithFleet() error {
 		"vehicle_id", v.ID,
 		"fleet_url", url)
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := v.httpClient.Post(url, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		slog.Error("HTTP request failed during registration",
 			"vehicle_id", v.ID,
@@ -650,8 +658,7 @@ func (v *Vehicle) reportToFleet() {
 	req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(jsonData))
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{Timeout: 5 * time.Second}
-	resp, err := client.Do(req)
+	resp, err := v.httpClient.Do(req)
 	if err != nil {
 		slog.Error("Failed to report location to fleet service",
 			"vehicle_id", v.ID,

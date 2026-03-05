@@ -40,17 +40,17 @@ output "dynamodb_jobs_table" {
 
 output "dashboard_url" {
   description = "URL for the dashboard"
-  value       = "http://${aws_lb.main.dns_name}"
+  value       = "https://${aws_lb.main.dns_name}"
 }
 
 output "fleet_service_url" {
   description = "URL for the fleet service"
-  value       = "http://${aws_lb.main.dns_name}/fleet"
+  value       = "https://${aws_lb.main.dns_name}/fleet"
 }
 
 output "job_service_url" {
   description = "URL for the job service"
-  value       = "http://${aws_lb.main.dns_name}/jobs"
+  value       = "https://${aws_lb.main.dns_name}/jobs"
 }
 
 output "kinesis_vehicle_telemetry_stream" {
