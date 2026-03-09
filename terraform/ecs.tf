@@ -149,7 +149,7 @@ resource "aws_ecs_task_definition" "job_service" {
         },
         {
           name  = "FLEET_SERVICE_URL"
-          value = "https://${aws_lb.main.dns_name}/fleet"
+          value = "http://fleet-service.${var.project_name}.local:8080/fleet"
         },
         {
           name  = "AWS_REGION"
@@ -170,10 +170,6 @@ resource "aws_ecs_task_definition" "job_service" {
         {
           name  = "KINESIS_JOB_EVENTS_STREAM"
           value = aws_kinesis_stream.job_events.name
-        },
-        {
-          name  = "TLS_SKIP_VERIFY"
-          value = "true"
         }
       ]
 
@@ -212,11 +208,11 @@ resource "aws_ecs_task_definition" "car_simulator" {
       environment = [
         {
           name  = "FLEET_SERVICE_URL"
-          value = "https://${aws_lb.main.dns_name}/fleet"
+          value = "http://fleet-service.${var.project_name}.local:8080/fleet"
         },
         {
           name  = "JOB_SERVICE_URL"
-          value = "https://${aws_lb.main.dns_name}/jobs"
+          value = "http://job-service.${var.project_name}.local:8081/jobs"
         },
         {
           name  = "REGION"
@@ -241,10 +237,6 @@ resource "aws_ecs_task_definition" "car_simulator" {
         {
           name  = "KINESIS_VEHICLE_TELEMETRY_STREAM"
           value = aws_kinesis_stream.vehicle_telemetry.name
-        },
-        {
-          name  = "TLS_SKIP_VERIFY"
-          value = "true"
         }
       ]
 
@@ -294,15 +286,11 @@ resource "aws_ecs_task_definition" "dashboard" {
         },
         {
           name  = "FLEET_SERVICE_URL"
-          value = "https://${aws_lb.main.dns_name}/fleet"
+          value = "http://fleet-service.${var.project_name}.local:8080/fleet"
         },
         {
           name  = "JOB_SERVICE_URL"
-          value = "https://${aws_lb.main.dns_name}/jobs"
-        },
-        {
-          name  = "NODE_TLS_REJECT_UNAUTHORIZED"
-          value = "0"
+          value = "http://job-service.${var.project_name}.local:8081/jobs"
         }
       ]
 
@@ -343,6 +331,10 @@ resource "aws_ecs_service" "fleet_service" {
     container_port   = 8080
   }
 
+  service_registries {
+    registry_arn = aws_service_discovery_service.fleet_service.arn
+  }
+
   depends_on = [aws_lb_listener.main]
 
   tags = {
@@ -367,6 +359,10 @@ resource "aws_ecs_service" "job_service" {
     target_group_arn = aws_lb_target_group.job_service.arn
     container_name   = "job-service"
     container_port   = 8081
+  }
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.job_service.arn
   }
 
   depends_on = [aws_lb_listener.main]

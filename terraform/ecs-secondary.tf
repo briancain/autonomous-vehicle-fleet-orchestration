@@ -160,15 +160,11 @@ resource "aws_ecs_task_definition" "car_simulator_secondary" {
         },
         {
           name  = "FLEET_SERVICE_URL"
-          value = "https://${aws_lb.secondary.dns_name}/api/fleet"
+          value = "http://fleet-service.${var.project_name}.local:8081/api/fleet"
         },
         {
           name  = "JOB_SERVICE_URL"
-          value = "https://${aws_lb.secondary.dns_name}/api/jobs"
-        },
-        {
-          name  = "TLS_SKIP_VERIFY"
-          value = "true"
+          value = "http://job-service.${var.project_name}.local:8080/api/jobs"
         }
       ]
 
@@ -209,15 +205,11 @@ resource "aws_ecs_task_definition" "dashboard_secondary" {
       environment = [
         {
           name  = "REACT_APP_FLEET_SERVICE_URL"
-          value = "https://${aws_lb.secondary.dns_name}/api/fleet"
+          value = "http://fleet-service.${var.project_name}.local:8081/api/fleet"
         },
         {
           name  = "REACT_APP_JOB_SERVICE_URL"
-          value = "https://${aws_lb.secondary.dns_name}/api/jobs"
-        },
-        {
-          name  = "NODE_TLS_REJECT_UNAUTHORIZED"
-          value = "0"
+          value = "http://job-service.${var.project_name}.local:8080/api/jobs"
         }
       ]
 
@@ -244,6 +236,14 @@ resource "aws_security_group" "ecs_tasks_secondary" {
     to_port         = 65535
     protocol        = "tcp"
     security_groups = [aws_security_group.alb_secondary.id]
+  }
+
+  # Allow ECS tasks to communicate with each other for service discovery
+  ingress {
+    from_port = 8080
+    to_port   = 8081
+    protocol  = "tcp"
+    self      = true
   }
 
   egress {
@@ -279,6 +279,10 @@ resource "aws_ecs_service" "fleet_service_secondary" {
     container_port   = 8081
   }
 
+  service_registries {
+    registry_arn = aws_service_discovery_service.fleet_service_secondary.arn
+  }
+
   depends_on = [aws_lb_listener_rule.fleet_service_secondary]
 }
 
@@ -301,6 +305,10 @@ resource "aws_ecs_service" "job_service_secondary" {
     target_group_arn = aws_lb_target_group.job_service_secondary.arn
     container_name   = "job-service"
     container_port   = 8080
+  }
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.job_service_secondary.arn
   }
 
   depends_on = [aws_lb_listener_rule.job_service_secondary]

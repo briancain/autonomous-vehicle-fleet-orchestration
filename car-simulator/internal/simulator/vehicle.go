@@ -3,7 +3,6 @@ package simulator
 import (
 	"bytes"
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -58,11 +57,6 @@ func NewVehicle(id, region, fleetServiceURL, jobServiceURL string, startLat, sta
 	batteryLevel := rand.Intn(40) + 60 // Start with 60-100% battery
 	batteryDrainRate := 4.0            // 4.0km per 1% battery (400km total range)
 
-	transport := http.DefaultTransport.(*http.Transport).Clone()
-	if os.Getenv("TLS_SKIP_VERIFY") == "true" {
-		transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	}
-
 	v := &Vehicle{
 		ID:               id,
 		Region:           region,
@@ -75,7 +69,7 @@ func NewVehicle(id, region, fleetServiceURL, jobServiceURL string, startLat, sta
 		fleetServiceURL:  fleetServiceURL,
 		jobServiceURL:    jobServiceURL,
 		jobClient:        job.NewClient(jobServiceURL),
-		httpClient:       &http.Client{Timeout: 10 * time.Second, Transport: transport},
+		httpClient:       &http.Client{Timeout: 10 * time.Second},
 		batteryDrainRate: batteryDrainRate,
 		jobPhase:         "idle",
 		routingService:   NewRoutingService(),
